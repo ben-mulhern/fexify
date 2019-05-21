@@ -11,41 +11,41 @@
       <p>Compress large SQL statements so they can be easily pasted into FEX</p>
       <textarea id="sqlin" rows="30" cols="100" placeholder="Paste your SQL here" required autofocus oninput="fexify()"></textarea>
       <textarea id="sqlout" rows="30" cols="100" placeholder="Result SQL" disabled></textarea>
-  </div>
+    </div>
   
-  <script type="text/javascript">
-    
-    const fexify = () => {
-      const original = document.getElementById('sqlin').value
-      const noLineBreaks = original.replace(/(\r\n|\n|\r)/gm," ")
-      const noExtraBlanks = reduceBlanks(noLineBreaks)
-      const output = chopLines(noExtraBlanks)
-      document.getElementById('sqlout').value = output
-    }
-    
-    const reduceBlanks = (str) => {
-      const out = str.replace("  ", " ")
-      if (out.length == str.length) {
-        return out
-      } else {
-        return reduceBlanks(out)
+    <script type="text/javascript">
+      
+      const fexify = () => {
+        const original = document.getElementById('sqlin').value
+        const noLineBreaks = original.replace(/(\r\n|\n|\r)/gm," ")
+        const noExtraBlanks = reduceBlanks(noLineBreaks)
+        const output = chopLines(noExtraBlanks)
+        document.getElementById('sqlout').value = output
       }
-    }
-    
-    const chopLines = (str) => {
-      if (str.length <= 69) {
-      return str  
-      } else {
-        const s = str.substring(0, 68)
-        const b = s.lastIndexOf(" ")
-      if (b == -1) {
-        return (s + "\n" + fexLines(str.substring(69)))
-      } else {
-        return (str.substring(0, b) + "\n" + chopLines(str.substring(b+1)))
+      
+      const reduceBlanks = (str) => {
+        const out = str.replace("  ", " ")
+        if (out.length == str.length) {
+          return out
+        } else {
+          return reduceBlanks(out)
         }
-      }        
-    }
-    
-  </script>
+      }
+      
+      const chopLines = (str) => {
+        if (str.length <= 69) {
+        return str  
+        } else {
+          const s = str.substring(0, 68)
+          const b = s.lastIndexOf(" ")
+        if (b == -1) {
+          return (s + "\n" + fexLines(str.substring(69)))
+        } else {
+          return (str.substring(0, b) + "\n" + chopLines(str.substring(b+1)))
+          }
+        }        
+      }
+      
+    </script>
   </body>
 </html>
