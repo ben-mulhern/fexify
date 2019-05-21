@@ -22,6 +22,15 @@
         const noExtraBlanks = reduceBlanks(noLineBreaksOrTabs)
         const output = chopLines(noExtraBlanks)
         document.getElementById('sqlout').value = output
+
+        const lines = output.split("\n")
+        console.log(lines.length)
+        if (lines.length > 64) {
+          document.getElementById('sqlout').style.backgroundColor = "red"
+        } else {
+          document.getElementById('sqlout').style.backgroundColor = "rgb(235, 235, 228)"
+        }
+
       }
       
       const reduceBlanks = (str) => {
