@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <head>
+    <title>Fexify</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="p-3">
+      <h1>Fexify your SQL</h1>
+	  <p>Compress large SQL statements so they can be easily pasted into FEX</p>
+	  <textarea id="sqlin" rows="30" cols="100" placeholder="Paste your SQL here" required autofocus oninput="fexify()"></textarea>
+	  <textarea id="sqlout" rows="30" cols="100" placeholder="Result SQL" disabled></textarea>
+	</div>
+	
+	<script type="text/javascript">
+	  const fexify = () => {
+	    const original = document.getElementById('sqlin').value
+		const noLineBreaks = original.replace(/(\r\n|\n|\r)/gm," ")
+		const noExtraBlanks = reduceBlanks(noLineBreaks)
+		const output = chopLines(noExtraBlanks)
+	    document.getElementById('sqlout').value = output
+	  }
+	  
+	  const reduceBlanks = (str) => {
+	    const out = str.replace("  ", " ")
+		if (out.length == str.length) {
+          return out
+		} else {
+		  return reduceBlanks(out)
+		}
+	  }
+	  
+	  const chopLines = (str) =>  {
+	    if (str.length <= 69) {
+		  return str  
+	    } else {
+  		  const s = str.substring(0, 68)
+	  	  const b = s.lastIndexOf(" ")
+		  if (b == -1) {
+		    return (s + "\n" + fexLines(str.substring(69)))
+		  } else {
+		    return (str.substring(0, b) + "\n" + chopLines(str.substring(b+1)))
+	  	  }
+	    }	  	  
+	  }
+	  
+	</script>
+  </body>
+</html>
