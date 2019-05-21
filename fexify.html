@@ -17,8 +17,8 @@
       
       const fexify = () => {
         const original = document.getElementById('sqlin').value
-        const noLineBreaks = original.replace(/(\r\n|\n|\r)/gm," ")
-        const noExtraBlanks = reduceBlanks(noLineBreaks)
+        const noLineBreaksOrTabs = original.replace(/(\r\n|\n|\r|\t)/gm," ")
+        const noExtraBlanks = reduceBlanks(noLineBreaksOrTabs)
         const output = chopLines(noExtraBlanks)
         document.getElementById('sqlout').value = output
       }
