@@ -9,6 +9,7 @@
     <div class="p-3">
       <h1>Fexify your SQL</h1>
       <p>Compress large SQL statements so they can be easily pasted into FEX</p>
+      <p>This will strip out comments, line breaks, tabs and unnecessary white space, then chop it up into lovely MI005-friendly lines. Goes red if the result will exceed the max 64 lines</p>
       <textarea id="sqlin" rows="30" cols="100" placeholder="Paste your SQL here" required autofocus oninput="fexify()"></textarea>
       <textarea id="sqlout" rows="30" cols="100" placeholder="Result SQL" disabled></textarea>
     </div>
