@@ -7,25 +7,51 @@
   </head>
   <body>
     <div class="p-3">
-      <h1>Fexify your SQL</h1>
-      <p>Compress large SQL statements so they can be easily pasted into FEX</p>
-      <p>This will strip out comments, line breaks, tabs and unnecessary white space, then chop it up into lovely MI005-friendly lines. Goes red if the result will exceed the max 64 lines</p>
-      <textarea id="sqlin" rows="30" cols="100" placeholder="Paste your SQL here" required autofocus oninput="fexify()"></textarea>
-      <textarea id="sqlout" rows="30" cols="100" placeholder="Result SQL" disabled></textarea>
+      <h1>Fexify your SQL</h1>   
+      <p>Compress large SQL statements so they can be easily pasted into FEX.</p>
+      <p>This will strip out comments, line breaks, tabs and unnecessary white space, then chop it up into MI005-friendly lines. Goes red if the result would exceed the max 64 lines.</p>
+      <p>Select Ugly mode if you want to split words/terms across line boundaries to maximise capacity.</p>
+    </div>      
+
+    <div class="p-3 btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-primary active" id="prettyishlabel">
+        <input type="radio" id="prettyish" autocomplete="off" checked onclick="setSplitMode(false)">Pretty(ish)</label>
+      <label class="btn btn-primary" id="uglylabel">
+        <input type="radio" id="ugly" autocomplete="off" onclick="setSplitMode(true)">Ugly</label>
+    </div>
+
+    <div class="p-3">
+      <textarea id="sqlin" rows="30" cols="100" placeholder="Paste/type your SQL here" required autofocus oninput="fexify()"></textarea>
+      <textarea id="sqlout" rows="30" cols="100" placeholder="Copy result SQL from here" disabled></textarea>
     </div>
   
     <script type="text/javascript">
       
+      let splitWords = false
+
+      const setSplitMode = (mode) => {
+        splitWords = mode
+        document.getElementById('prettyish').checked = !splitWords
+        document.getElementById('ugly').checked = splitWords    
+        if (splitWords) {
+          document.getElementById('prettyishlabel').classList.remove('active')
+          document.getElementById('uglylabel').classList.add('active')
+        } else {
+          document.getElementById('prettyishlabel').classList.add('active')
+          document.getElementById('uglylabel').classList.remove('active')        
+        }
+        fexify()
+      }
+
       const fexify = () => {
         const original = document.getElementById('sqlin').value
         const noComments = original.replace(/--.*(\r\n|\n|\r)/gm," ").trim()
         const noLineBreaksOrTabs = noComments.replace(/(\r\n|\n|\r|\t)/gm," ")
-        const noExtraBlanks = reduceBlanks(noLineBreaksOrTabs)
-        const output = chopLines(noExtraBlanks)
+        const noExtraBlanks = reduceBlanks(noLineBreaksOrTabs)      
+        const output = (splitWords ? chopLinesUgly(noExtraBlanks) : chopLinesPretty(noExtraBlanks))
         document.getElementById('sqlout').value = output
 
         const lines = output.split("\n")
-        console.log(lines.length)
         if (lines.length > 64) {
           document.getElementById('sqlout').style.backgroundColor = "red"
         } else {
@@ -42,21 +68,31 @@
           return reduceBlanks(out)
         }
       }
-      
-      const chopLines = (str) => {
-        if (str.length <= 69) {
-        return str  
+
+      const chopLinesPretty = (inp) => {
+        const str = inp.trim()
+        if (str.length <= 70) {
+          return str  
         } else {
-          const s = str.substring(0, 68)
-          const b = s.lastIndexOf(" ")
-        if (b == -1) {
-          return (s + "\n" + fexLines(str.substring(69)))
+          const s = str.substring(0, 70)
+          const b = s.lastIndexOf(" ")        
+        if (b == -1 || b == 69) {
+          return (s + "\n" + chopLinesPretty(str.substring(69)))
         } else {
-          return (str.substring(0, b) + "\n" + chopLines(str.substring(b+1)))
+          return (str.substring(0, b) + "\n" + chopLinesPretty(str.substring(b)))
           }
         }        
       }
+
+      const chopLinesUgly = (str) => {
+        if (str.length <= 70) {
+          return str
+        } else {
+          return str.substring(0, 70) + "\n" + chopLinesUgly(str.substring(70))
+        }
+      }
       
+
     </script>
   </body>
 </html>
